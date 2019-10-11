@@ -1,26 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import logo from "./logo.svg";
+import { CardList } from "./components/cardList/cardList.component";
+import "./App.css";
+import { SearchBox } from "./components/searchbox/searchbox.component";
+/**/
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      monsters: [],
+      searchField: ""
+    };
+  }
+  componentDidMount() {
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then(response => response.json())
+      .then(users => this.setState({ monsters: users }));
+  }
+  render() {
+    const { monsters, searchField } = this.state;
+    const filterMonster = monsters.filter(monster =>
+      monster.name.toLowerCase().includes(searchField.toLowerCase())
+    );
+    console.log(filterMonster);
+    return (
+      <div>
+        <br />
+        <h3 className="center">Vos monstres péféres</h3>
+        <SearchBox
+          type="search"
+          placeholder="Rechercher"
+          handleChange={e => this.setState({ searchField: e.target.value })}
+          style={{ width: 150 }}
+        />
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+        <CardList monsters={filterMonster} />
+      </div>
+    );
+  }
 }
 
 export default App;
